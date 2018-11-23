@@ -95,16 +95,25 @@ main:
   lda #$40
   sta $4017
 
-  ; load bank switch data to 0x5ff8
+  ; set up playback parameters
   lda #$00 ; song number
   ldx #$00 ; ntsc / pal bit
   jsr $be34 ; nsf load address
 
 play_loop:
   jsr $f2d0
-- lda $2002
-  bpl -
-  jmp play_loop
+  ldx #$10
+  ldy #$ff
+  @delay_loop:
+    dey
+    beq @x_dec
+    jmp @delay_loop
+
+  @x_dec:
+    ldy #$ff
+    dex
+    beq play_loop
+    jmp @delay_loop
 
 vblank:
 irq:
